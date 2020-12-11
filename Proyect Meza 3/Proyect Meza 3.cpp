@@ -123,7 +123,8 @@ Grafo* Crear()
 
 int main()
 {
-    //mamadas que hice xd 
+    //mamadas que hice xd
+    // mas mamadas xD x2 
     //Variables para el menú
     int opcion = 0, subOpcion = 0;
     bool menu = true, subMenu = true, registrar = true;
