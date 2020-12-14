@@ -95,6 +95,7 @@ class Grafo
             //Matriz de Pares
             int**pareos = new int*[(listaGrafo.size()/2)+1];
             for(int i = 0; i < (listaGrafo.size()/2)+1; i++){
+                pareos[i] = new int[2];
             }
 
             int columnas = 0, filas = 0;
