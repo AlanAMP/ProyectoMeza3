@@ -5,31 +5,30 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <tuple>
 using namespace std;
 //Hola
+struct Nodo
+{
+    int dato; //Informacion del nodo(value)
+    bool visitado; //Saber si esta visitado o no (isvisited)
+    vector<Nodo*> vecinos; //Vecinos del nodo (neighs)
+
+    Nodo(int dato) //Inicializar el nodo(createNode) //Constructor
+    {
+        this->dato = dato;
+        visitado = false;
+
+    }
+};
 class Grafo
 {
-
-   struct Nodo
-   {
-        int dato; //Informacion del nodo(value)
-        bool visitado; //Saber si esta visitado o no (isvisited)
-        vector<Nodo*> vecinos; //Vecinos del nodo (neighs)
-        
-        Nodo(int dato) //Inicializar el nodo(createNode)
-        {
-            this->dato = dato;
-            visitado = false;
-       
-        }
-   };
-
-    int** matrizGrafo; //matrizAdyacencia
-    vector <Nodo*> listaGrafo; //lista de adyacencia
-    int numVertices; //Cantidad de vertices del grafo
-
     public:
-        Grafo(int numVertices) //Inicializar matriz y lista 
+        int** matrizGrafo; //matrizAdyacencia
+        vector <Nodo*> listaGrafo; //lista de adyacencia
+        vector <tuple<int, int>> aristasDFS;
+        int numVertices; //Cantidad de vertices del grafo
+        Grafo(int numVertices) //Inicializar matriz y lista //Constructor
         {
             this->numVertices = numVertices;
             matrizGrafo = new int* [numVertices];
@@ -78,15 +77,27 @@ class Grafo
             for (int i = 0; i < listaGrafo.size(); i++)
             {
                 Nodo* verticeAct = listaGrafo.at(i);
-                cout << verticeAct->dato << " ";
+                cout << (verticeAct->dato + 1) << " ";
                 for (int j = 0; j < verticeAct->vecinos.size(); j++)
                 {
-                    cout << verticeAct->vecinos.at(j)->dato << " ";
+                    cout << (verticeAct->vecinos.at(j)->dato + 1) << " ";
                 }
                 cout << endl;
             }
         }
-
+        void DFS(Nodo* vertice, int vuelta)
+        {
+            vertice->visitado = true;
+            for (int i = 0; i < vertice->vecinos.size(); i++)
+            {
+                Nodo* vecino = vertice->vecinos.at(i);
+                if (!vecino -> visitado)
+                {
+                    cout << (vertice->dato + 1) << "-" << (vecino->dato + 1) << " ";
+                    DFS(vecino, vuelta);
+                }
+            }
+        }
 };
 //Funcion para crear un grafo
 Grafo* Crear()
@@ -214,7 +225,20 @@ int main()
                     cout << "BFS" << endl;
                     break;
                 case 4: //DFS de grafo dirigido
+                {
                     cout << "DFS" << endl;
+                    int vuelta = 0;
+                    for (int i = 0; i < grafo->listaGrafo.size(); i++)
+                    {
+                        Nodo* verticeInicio = grafo->listaGrafo.at(i);
+                        if (verticeInicio->visitado == false)
+                        {
+                            vuelta += 1;
+                            cout << "Aristas que conforman el arbol abarcador " << vuelta << endl;
+                            grafo->DFS(verticeInicio, vuelta);
+                        }
+                    }
+                }
                     break;
                 default:
                     subMenu = false;
