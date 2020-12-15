@@ -132,17 +132,18 @@ class Grafo
   for (int i = 0; i < numVertices; i++)
   {
       if(colorArr[i] == 1){
-          cout << i +1  << endl;
+          cout << i +1 << " ";
       }
   }
+  cout << endl;
   cout << "segundo set de vertices" << endl;
   for (int i = 0; i < numVertices; i++)
   {
       if(colorArr[i] != 1){
-          cout << i +1  << endl;
+          cout << i +1 << " ";
       }
   }
-  
+   cout << endl;
    
     return true; 
 } 
