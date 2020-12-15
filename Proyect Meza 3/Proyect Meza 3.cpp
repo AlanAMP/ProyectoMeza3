@@ -126,9 +126,11 @@ class Grafo
                 }
                 cout << endl;
             }
+        }
+
 
         bool isBipartite_Matrix(int src) 
-{ 
+{
     //funcion para grafo bipartito
     int* colorArr= new int[numVertices]; 
     for (int i = 0; i < numVertices; ++i) 
@@ -185,8 +187,9 @@ class Grafo
    cout << endl;
    
     return true; 
-}   
-        }
+ } 
+
+        
         void LimpiarVisitados()
         {
             for (int i = 0; i < listaGrafo.size(); i++)
