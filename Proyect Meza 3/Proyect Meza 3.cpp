@@ -126,67 +126,53 @@ class Grafo
                 }
                 cout << endl;
             }
-
-        bool isBipartite_Matrix(int src) 
-{ 
-    //funcion para grafo bipartito
-    int* colorArr= new int[numVertices]; 
-    for (int i = 0; i < numVertices; ++i) 
-        colorArr[i] = -1; 
-  
-    
-    colorArr[src] = 1; 
-  
-    
-    queue <int> q; 
-    q.push(src); 
-  
-    while (!q.empty()) 
-    { 
-        
-        int u = q.front(); 
-        q.pop(); 
-  
-        
-        if (matrizGrafo[u][u] == 1) 
-        return false;  
-  
-       
-        for (int v = 0; v < numVertices; ++v) 
+        }
+        bool isBipartite_Matrix(int src) //funcion para grafo bipartito
         { 
             
-            if (matrizGrafo[u][v] && colorArr[v] == -1) 
+            int* colorArr= new int[numVertices]; 
+            for (int i = 0; i < numVertices; ++i) 
+                colorArr[i] = -1;    
+            colorArr[src] = 1; 
+            queue <int> q; 
+            q.push(src); 
+            while (!q.empty()) 
             { 
-               
-                colorArr[v] = 1 - colorArr[u]; 
-                q.push(v); 
+                int u = q.front(); 
+                q.pop();       
+                if (matrizGrafo[u][u] == 1) 
+                    return false;         
+                for (int v = 0; v < numVertices; ++v) 
+                {             
+                    if (matrizGrafo[u][v] && colorArr[v] == -1) 
+                    {                
+                        colorArr[v] = 1 - colorArr[u]; 
+                        q.push(v); 
+                    }            
+                    else if (matrizGrafo[u][v] && colorArr[v] == colorArr[u]) 
+                        return false; 
+                } 
             } 
-  
-           
-            else if (matrizGrafo[u][v] && colorArr[v] == colorArr[u]) 
-                return false; 
-        } 
-    } 
-    cout << "primer set de vertices" << endl;
-  for (int i = 0; i < numVertices; i++)
-  {
-      if(colorArr[i] == 1){
-          cout << i +1 << " ";
-      }
-  }
-  cout << endl;
-  cout << "segundo set de vertices" << endl;
-  for (int i = 0; i < numVertices; i++)
-  {
-      if(colorArr[i] != 1){
-          cout << i +1 << " ";
-      }
-  }
-   cout << endl;
-   
-    return true; 
-}   
-        }
+            cout << "primer set de vertices" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] == 1)
+                {
+                    cout << i +1 << " ";
+                }
+            }
+            cout << endl;
+            cout << "segundo set de vertices" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] != 1)
+                {
+                  cout << i +1 << " ";
+                } 
+            }
+            cout << endl;
+        return true; 
+        }   
         void LimpiarVisitados()
         {
             for (int i = 0; i < listaGrafo.size(); i++)
