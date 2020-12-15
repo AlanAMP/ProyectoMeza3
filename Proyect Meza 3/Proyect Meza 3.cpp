@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <tuple>
+#include <queue>
 using namespace std;
 //Hola
 struct Nodo
@@ -13,7 +14,7 @@ struct Nodo
     int dato; //Informacion del nodo(value)
     bool visitado; //Saber si esta visitado o no (isvisited)
     vector<Nodo*> vecinos; //Vecinos del nodo (neighs)
-
+    Nodo* padre;
     Nodo(int dato) //Inicializar el nodo(createNode) //Constructor
     {
         this->dato = dato;
@@ -28,6 +29,8 @@ class Grafo
         vector <Nodo*> listaGrafo; //lista de adyacencia
         vector <tuple<int, int>> aristasDFS;
         int numVertices; //Cantidad de vertices del grafo
+        vector<int> recorridoDFS;
+        vector<int> recorridoBFS;
         Grafo(int numVertices) //Inicializar matriz y lista //Constructor
         {
             this->numVertices = numVertices;
@@ -88,6 +91,7 @@ class Grafo
         void DFS(Nodo* vertice, int vuelta)
         {
             vertice->visitado = true;
+            recorridoDFS.push_back((vertice->dato + 1));
             for (int i = 0; i < vertice->vecinos.size(); i++)
             {
                 Nodo* vecino = vertice->vecinos.at(i);
@@ -96,6 +100,39 @@ class Grafo
                     cout << (vertice->dato + 1) << "-" << (vecino->dato + 1) << " ";
                     DFS(vecino, vuelta);
                 }
+            }
+        }
+        void BFS(Nodo* vertice)
+        {
+            queue <Nodo*> cola;
+            cola.push(vertice);
+            vertice->visitado = true;
+            while (cola.size() > 0)
+            {
+                Nodo* aux = cola.front();
+                cola.pop();
+                cout << aux->dato << " expande a: ";
+                recorridoBFS.push_back((aux->dato + 1));
+                for (int i = 0; i < aux->vecinos.size(); i++)
+                {
+                    Nodo* vecino = aux->vecinos.at(i);
+                    if (!vecino->visitado)
+                    {
+                        cola.push(vecino);
+                        vecino->visitado = true;
+                        vecino->padre = aux;
+                        cout << vecino->dato << " ";
+                    }
+                }
+                cout << endl;
+            }
+
+        }
+        void LimpiarVisitados()
+        {
+            for (int i = 0; i < listaGrafo.size(); i++)
+            {
+                listaGrafo.at(i)->visitado = false;
             }
         }
 };
@@ -222,21 +259,34 @@ int main()
                     cout << "Lista grafo dirigido" << endl;
                     break;
                 case 3: //BFS de grafo dirigido
+                {
+                    grafo->LimpiarVisitados();
                     cout << "BFS" << endl;
+                    grafo->BFS(grafo->listaGrafo.at(0));
+                    cout << endl << "Recorrido BFS desde " << (grafo->listaGrafo.at(0)->dato + 1) << endl;
+                    for (int i = 0; i < grafo->recorridoBFS.size(); i++)
+                    {
+                        if (i != (grafo->recorridoBFS.size() - 1))
+                            cout << grafo->recorridoBFS.at(i) << "-";
+                        else
+                            cout << grafo->recorridoBFS.at(i) << endl;
+                    }
+                }
                     break;
                 case 4: //DFS de grafo dirigido
                 {
+                    grafo->LimpiarVisitados();
                     cout << "DFS" << endl;
-                    int vuelta = 0;
-                    for (int i = 0; i < grafo->listaGrafo.size(); i++)
+                    Nodo* verticeInicio = grafo->listaGrafo.at(0);
+                    cout << "Aristas que conforman el arbol abarcador" << endl;
+                    grafo->DFS(verticeInicio, 1);
+                    cout << endl << "Recorrido DFS desde " << (verticeInicio->dato + 1) << endl;
+                    for (int i = 0; i < grafo->recorridoDFS.size(); i++)
                     {
-                        Nodo* verticeInicio = grafo->listaGrafo.at(i);
-                        if (verticeInicio->visitado == false)
-                        {
-                            vuelta += 1;
-                            cout << "Aristas que conforman el arbol abarcador " << vuelta << endl;
-                            grafo->DFS(verticeInicio, vuelta);
-                        }
+                        if (i != (grafo->recorridoDFS.size() - 1))
+                            cout << grafo->recorridoDFS.at(i) << "-";
+                        else
+                            cout << grafo->recorridoDFS.at(i) << endl;
                     }
                 }
                     break;
