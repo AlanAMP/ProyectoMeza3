@@ -127,6 +127,65 @@ class Grafo
                 cout << endl;
             }
 
+        bool isBipartite_Matrix(int src) 
+{ 
+    //funcion para grafo bipartito
+    int* colorArr= new int[numVertices]; 
+    for (int i = 0; i < numVertices; ++i) 
+        colorArr[i] = -1; 
+  
+    
+    colorArr[src] = 1; 
+  
+    
+    queue <int> q; 
+    q.push(src); 
+  
+    while (!q.empty()) 
+    { 
+        
+        int u = q.front(); 
+        q.pop(); 
+  
+        
+        if (matrizGrafo[u][u] == 1) 
+        return false;  
+  
+       
+        for (int v = 0; v < numVertices; ++v) 
+        { 
+            
+            if (matrizGrafo[u][v] && colorArr[v] == -1) 
+            { 
+               
+                colorArr[v] = 1 - colorArr[u]; 
+                q.push(v); 
+            } 
+  
+           
+            else if (matrizGrafo[u][v] && colorArr[v] == colorArr[u]) 
+                return false; 
+        } 
+    } 
+    cout << "primer set de vertices" << endl;
+  for (int i = 0; i < numVertices; i++)
+  {
+      if(colorArr[i] == 1){
+          cout << i +1 << " ";
+      }
+  }
+  cout << endl;
+  cout << "segundo set de vertices" << endl;
+  for (int i = 0; i < numVertices; i++)
+  {
+      if(colorArr[i] != 1){
+          cout << i +1 << " ";
+      }
+  }
+   cout << endl;
+   
+    return true; 
+}   
         }
         void LimpiarVisitados()
         {
@@ -140,30 +199,30 @@ class Grafo
 Grafo* Crear()
 {
     //Codigo para saber cuantos vertices tiene el grafo
-    int vertices = 0, opcion =0;
-    bool registrar = true;
+    int vertices = 0;
     Grafo* grafo;
     cout << "Creacion del grafo" << endl;
     cout << "Numero de vertices: ";
     cin >> vertices;
     grafo = new Grafo(vertices);
     //Codigo para registrar las adyacencias
-    while (registrar)
+    cout << "si deseas dejar de registrar presiona 0";
+    while (true)
     {
         int vertice1 = 0, vertice2 = 0;
         system("CLS");
         cout << "Registro de adyacencias de los vertices\n";
         cout << "Del vertice: ";
         cin >> vertice1;
+        if (vertice1 == 0)
+            break;
         cout << "Al vertice: ";
         cin >> vertice2;
+        
         if (grafo != NULL) {
             grafo->addVecino(vertice1, vertice2);
         }
-        cout << "Si terminaste de registrar presiona 1 si no presiona cualquier otro numero";
-        cin >> opcion;
-        if (opcion == 1)
-            registrar = false;
+       
     }
     system("CLS");
     return grafo;
@@ -203,6 +262,8 @@ int main()
                 {
                 case 1: //Usando matriz de adyacencia
                     cout << "Grafos Bipartitos con matriz" << endl;
+                    if(!grafo->isBipartite_Matrix(0))
+                    cout << "no es bipartito "<< endl;
                     break;
                 case 2: //Usando lista de adyacencia
                     cout << "Grafos Bipartitos con lista" << endl;
