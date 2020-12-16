@@ -5,31 +5,38 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <tuple>
+#include <queue>
+#include <algorithm>
+
 using namespace std;
+//Hola
+struct Nodo
+{
+    int dato; //Informacion del nodo(value)
+    bool visitado; //Saber si esta visitado o no (isvisited)
+    vector<Nodo*> vecinos; //Vecinos del nodo (neighs)
+    Nodo* padre;
+    Nodo(int dato) //Inicializar el nodo(createNode) //Constructor
+    {
+        this->dato = dato;
+        visitado = false;
+
+    }
+};
+
+bool compararNodos(Nodo* a, Nodo* b) { return (a->vecinos.size() < b->vecinos.size()); }
 
 class Grafo
 {
-
-   struct Nodo
-   {
-        int dato; //Informacion del nodo(value)
-        bool visitado; //Saber si esta visitado o no (isvisited)
-        vector<Nodo*> vecinos; //Vecinos del nodo (neighs)
-        
-        Nodo(int dato) //Inicializar el nodo(createNode)
-        {
-            this->dato = dato;
-            visitado = false;
-       
-        }
-   };
-
-    int** matrizGrafo; //matrizAdyacencia
-    vector <Nodo*> listaGrafo; //lista de adyacencia
-    int numVertices; //Cantidad de vertices del grafo
-
     public:
-        Grafo(int numVertices) //Inicializar matriz y lista 
+        int** matrizGrafo; //matrizAdyacencia
+        vector <Nodo*> listaGrafo; //lista de adyacencia
+        vector <tuple<int, int>> aristasDFS;
+        int numVertices; //Cantidad de vertices del grafo
+        vector<int> recorridoDFS;
+        vector<int> recorridoBFS;
+        Grafo(int numVertices) //Inicializar matriz y lista //Constructor
         {
             this->numVertices = numVertices;
             matrizGrafo = new int* [numVertices];
@@ -78,44 +85,154 @@ class Grafo
             for (int i = 0; i < listaGrafo.size(); i++)
             {
                 Nodo* verticeAct = listaGrafo.at(i);
-                cout << verticeAct->dato << " ";
+                cout << (verticeAct->dato + 1) << " ";
                 for (int j = 0; j < verticeAct->vecinos.size(); j++)
                 {
-                    cout << verticeAct->vecinos.at(j)->dato << " ";
+                    cout << (verticeAct->vecinos.at(j)->dato + 1) << " ";
                 }
                 cout << endl;
             }
         }
-
+        void pareoMaximal() {
+            LimpiarVisitados();
+            vector<Nodo*> nodos = listaGrafo;
+            sort(nodos.begin(), nodos.end(), compararNodos);
+            for (int i = 0; i < nodos.size(); i++) {
+                Nodo* temp = nodos.at(i);
+                if (!temp->visitado) {
+                    for (int j = 0; j < temp->vecinos.size(); j++) {
+                        if (!temp->vecinos.at(j)->visitado) {
+                            temp->vecinos.at(j)->visitado = true;
+                            temp->visitado = true;
+                            cout << temp->dato << "-" << temp->vecinos.at(j)->dato << endl;
+                            break;
+                        }
+                    }
+                }
+            }
+            LimpiarVisitados();
+        }
+        void DFS(Nodo* vertice, int vuelta)
+        {
+            vertice->visitado = true;
+            recorridoDFS.push_back((vertice->dato + 1));
+            for (int i = 0; i < vertice->vecinos.size(); i++)
+            {
+                Nodo* vecino = vertice->vecinos.at(i);
+                if (!vecino -> visitado)
+                {
+                    cout << (vertice->dato + 1) << "-" << (vecino->dato + 1) << " ";
+                    DFS(vecino, vuelta);
+                }
+            }
+        }
+        void BFS(Nodo* vertice)
+        {
+            queue <Nodo*> cola;
+            cola.push(vertice);
+            vertice->visitado = true;
+            while (cola.size() > 0)
+            {
+                Nodo* aux = cola.front();
+                cola.pop();
+                cout << aux->dato << " expande a: ";
+                recorridoBFS.push_back((aux->dato + 1));
+                for (int i = 0; i < aux->vecinos.size(); i++)
+                {
+                    Nodo* vecino = aux->vecinos.at(i);
+                    if (!vecino->visitado)
+                    {
+                        cola.push(vecino);
+                        vecino->visitado = true;
+                        vecino->padre = aux;
+                        cout << vecino->dato << " ";
+                    }
+                }
+                cout << endl;
+            }
+        }
+        bool isBipartite_Matrix(int src) //funcion para grafo bipartito
+        { 
+            
+            int* colorArr= new int[numVertices]; 
+            for (int i = 0; i < numVertices; ++i) 
+                colorArr[i] = -1;    
+            colorArr[src] = 1; 
+            queue <int> q; 
+            q.push(src); 
+            while (!q.empty()) 
+            { 
+                int u = q.front(); 
+                q.pop();       
+                if (matrizGrafo[u][u] == 1) 
+                    return false;         
+                for (int v = 0; v < numVertices; ++v) 
+                {             
+                    if (matrizGrafo[u][v] && colorArr[v] == -1) 
+                    {                
+                        colorArr[v] = 1 - colorArr[u]; 
+                        q.push(v); 
+                    }            
+                    else if (matrizGrafo[u][v] && colorArr[v] == colorArr[u]) 
+                        return false; 
+                } 
+            } 
+            cout << "primer set de vertices" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] == 1)
+                {
+                    cout << i +1 << " ";
+                }
+            }
+            cout << endl;
+            cout << "segundo set de vertices" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] != 1)
+                {
+                  cout << i +1 << " ";
+                } 
+            }
+            cout << endl;
+        return true; 
+        }   
+        void LimpiarVisitados()
+        {
+            for (int i = 0; i < listaGrafo.size(); i++)
+            {
+                listaGrafo.at(i)->visitado = false;
+            }
+        }
 };
 //Funcion para crear un grafo
 Grafo* Crear()
 {
     //Codigo para saber cuantos vertices tiene el grafo
-    int vertices = 0, opcion =0;
-    bool registrar = true;
+    int vertices = 0;
     Grafo* grafo;
     cout << "Creacion del grafo" << endl;
     cout << "Numero de vertices: ";
     cin >> vertices;
     grafo = new Grafo(vertices);
     //Codigo para registrar las adyacencias
-    while (registrar)
+    cout << "si deseas dejar de registrar presiona 0";
+    while (true)
     {
         int vertice1 = 0, vertice2 = 0;
         system("CLS");
         cout << "Registro de adyacencias de los vertices\n";
         cout << "Del vertice: ";
         cin >> vertice1;
+        if (vertice1 == 0)
+            break;
         cout << "Al vertice: ";
         cin >> vertice2;
+        
         if (grafo != NULL) {
             grafo->addVecino(vertice1, vertice2);
         }
-        cout << "Si terminaste de registrar presiona 1 si no presiona cualquier otro numero";
-        cin >> opcion;
-        if (opcion == 1)
-            registrar = false;
+       
     }
     system("CLS");
     return grafo;
@@ -157,6 +274,8 @@ int main()
                 {
                 case 1: //Usando matriz de adyacencia
                     cout << "Grafos Bipartitos con matriz" << endl;
+                    if(!grafo->isBipartite_Matrix(0))
+                    cout << "no es bipartito "<< endl;
                     break;
                 case 2: //Usando lista de adyacencia
                     cout << "Grafos Bipartitos con lista" << endl;
@@ -187,6 +306,7 @@ int main()
                     break;
                 case 3: //Pareo maximal
                     cout << "Pareos maximales" << endl;
+                    grafo->pareoMaximal();
                     break;
                 default:
                     subMenu = false;
@@ -213,10 +333,36 @@ int main()
                     cout << "Lista grafo dirigido" << endl;
                     break;
                 case 3: //BFS de grafo dirigido
+                {
+                    grafo->LimpiarVisitados();
                     cout << "BFS" << endl;
+                    grafo->BFS(grafo->listaGrafo.at(0));
+                    cout << endl << "Recorrido BFS desde " << (grafo->listaGrafo.at(0)->dato + 1) << endl;
+                    for (int i = 0; i < grafo->recorridoBFS.size(); i++)
+                    {
+                        if (i != (grafo->recorridoBFS.size() - 1))
+                            cout << grafo->recorridoBFS.at(i) << "-";
+                        else
+                            cout << grafo->recorridoBFS.at(i) << endl;
+                    }
+                }
                     break;
                 case 4: //DFS de grafo dirigido
+                {
+                    grafo->LimpiarVisitados();
                     cout << "DFS" << endl;
+                    Nodo* verticeInicio = grafo->listaGrafo.at(0);
+                    cout << "Aristas que conforman el arbol abarcador" << endl;
+                    grafo->DFS(verticeInicio, 1);
+                    cout << endl << "Recorrido DFS desde " << (verticeInicio->dato + 1) << endl;
+                    for (int i = 0; i < grafo->recorridoDFS.size(); i++)
+                    {
+                        if (i != (grafo->recorridoDFS.size() - 1))
+                            cout << grafo->recorridoDFS.at(i) << "-";
+                        else
+                            cout << grafo->recorridoDFS.at(i) << endl;
+                    }
+                }
                     break;
                 default:
                     subMenu = false;
