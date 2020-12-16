@@ -36,8 +36,11 @@ class Grafo
         int numVertices; //Cantidad de vertices del grafo
         vector<int> recorridoDFS;
         vector<int> recorridoBFS;
-        Grafo(int numVertices) //Inicializar matriz y lista //Constructor
+        bool dirigido;
+
+        Grafo(int numVertices, bool dirigido) //Inicializar matriz y lista //Constructor
         {
+            this->dirigido = dirigido;
             this->numVertices = numVertices;
             matrizGrafo = new int* [numVertices];
             for (int i = 0; i < numVertices; i++)
@@ -54,10 +57,18 @@ class Grafo
         
         void addVecino(int vertice1, int vertice2) //Registro de adyacencias del grafo
         {
-            matrizGrafo[vertice1 - 1][vertice2 - 1] = 1; //En la matriz
-            listaGrafo.at(vertice1 - 1)->vecinos.push_back(listaGrafo.at(vertice2 - 1)); //En la lista
+            if (dirigido)
+            {
+                matrizGrafo[vertice1 - 1][vertice2 - 1] = 1; //En la matriz
+                listaGrafo.at(vertice1 - 1)->vecinos.push_back(listaGrafo.at(vertice2 - 1)); //En la lista
+            }
+            else {
+                matrizGrafo[vertice1 - 1][vertice2 - 1] = 1; //En la matriz
+                matrizGrafo[vertice2 - 1][vertice1 - 1] = 1; 
+                listaGrafo.at(vertice1 - 1)->vecinos.push_back(listaGrafo.at(vertice2 - 1)); //En la lista
+                listaGrafo.at(vertice2 - 1)->vecinos.push_back(listaGrafo.at(vertice1 - 1)); 
+            }
         }
-
         void verMatriz() //Muestra el grafo puesto en matriz
         {
             for (int i = -1; i < numVertices; i++)
@@ -135,7 +146,7 @@ class Grafo
             {
                 Nodo* aux = cola.front();
                 cola.pop();
-                cout << aux->dato << " expande a: ";
+                cout << (aux->dato + 1) << " expande a: ";
                 recorridoBFS.push_back((aux->dato + 1));
                 for (int i = 0; i < aux->vecinos.size(); i++)
                 {
@@ -145,7 +156,7 @@ class Grafo
                         cola.push(vecino);
                         vecino->visitado = true;
                         vecino->padre = aux;
-                        cout << vecino->dato << " ";
+                        cout << (vecino->dato + 1) << " ";
                     }
                 }
                 cout << endl;
@@ -264,30 +275,42 @@ Grafo* Crear()
 {
     //Codigo para saber cuantos vertices tiene el grafo
     int vertices = 0;
+    int dirigido = 0;
     Grafo* grafo;
     cout << "Creacion del grafo" << endl;
     cout << "Numero de vertices: ";
     cin >> vertices;
-    grafo = new Grafo(vertices);
+    cout <<"Presiona 1 si tu grafo es dirigido cualquier otro numero si no lo es\n(Esto afecta la manera en como se almacena el grafo): ";
+    cin >> dirigido;
+    if (dirigido == 1)
+        grafo = new Grafo(vertices, true);
+    else
+        grafo = new Grafo(vertices, false);
     //Codigo para registrar las adyacencias
-    cout << "si deseas dejar de registrar presiona 0";
     while (true)
     {
         int vertice1 = 0, vertice2 = 0;
         system("CLS");
         cout << "Registro de adyacencias de los vertices\n";
+        cout << "si deseas dejar de registrar pon 0 en \"Del vertice:\"\n";
         cout << "Del vertice: ";
         cin >> vertice1;
         if (vertice1 == 0)
             break;
         cout << "Al vertice: ";
         cin >> vertice2;
-        
         if (grafo != NULL) {
             grafo->addVecino(vertice1, vertice2);
         }
        
     }
+    system("CLS");
+    cout << "Matriz de Adyacencia" << endl;
+    grafo->verMatriz();
+    cout << endl << "Lista de Adyacencia" << endl;
+    grafo->verLista();
+    cout << endl;
+    system("Pause");
     system("CLS");
     return grafo;
 }
@@ -300,14 +323,14 @@ int main()
     int opcion = 0, subOpcion = 0;
     bool menu = true, subMenu = true, registrar = true;
     //Grafo
-    Grafo* grafo;
+    Grafo* grafo = nullptr;
     //Código para registrar el grafo en la computadora
-    grafo = Crear();
-    grafo->verMatriz();
-    cout << endl;
-    grafo->verLista();
-    system("pause");
-    system("CLS");
+    //grafo = Crear();
+    //grafo->verMatriz();
+    //cout << endl;
+    //grafo->verLista();
+    //system("pause");
+    //system("CLS");
     //Codigo para el menú con los ejercicios
     while (menu)
     {
@@ -320,6 +343,8 @@ int main()
         case 1: //Grafos bipartitos
             while (subMenu)
             {
+                if (grafo == NULL)
+                    grafo = Crear();
                 cout << "Grafos Bipartitos"<<endl;
                 cout << "Presiona el numero:\n1 para usar matriz de adyacencia\n2 para usar lista de adyacencia\nCualquier otro numero para salir del ejercicio"<<endl;
                 cin >> subOpcion;
@@ -327,26 +352,31 @@ int main()
                 switch (subOpcion)
                 {
                 case 1: //Usando matriz de adyacencia
-                    cout << "Grafos Bipartitos con matriz" << endl;
+                    cout << "Grafo Bipartitos con matriz" << endl;
                     if(!grafo->isBipartite_Matrix(0))
-                    cout << "no es bipartito "<< endl;
+                        cout << "no es bipartito "<< endl;
+                    system("pause");
                     break;
                 case 2: //Usando lista de adyacencia
                     cout << "Grafos Bipartitos con lista" << endl;
                     if(!grafo->isBipartite_List(0))
                         cout<<"No es bipartito"<<endl;
+                    system("pause");
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
+            //delete grafo;
+            grafo = NULL;
             break;
         case 2: //Pareo de grafos 
             while (subMenu)
             {
+                if (grafo == NULL)
+                    grafo = Crear();
                 cout << "Pareos de Grafos" << endl;
                 cout << "Presiona el numero:\n1 para obtener un pareo del grafo\n2 para determinar si el grafo tiene pareos perfectos\n3 para pareos maximales" << endl;
                 cout << "Cualquier otro numero para salir del ejercicio" << endl;
@@ -356,25 +386,44 @@ int main()
                 {
                 case 1: //Pareo del grafo
                     cout << "Pareo del grafo" << endl;
+                    system("pause");
                     break;
                 case 2: //Pareo perfecto
                     cout << "Pareos perfectos" << endl;
+                    system("pause");
                     break;
                 case 3: //Pareo maximal
                     cout << "Pareos maximales" << endl;
                     grafo->pareoMaximal();
+                    system("pause");
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
+            delete grafo;
+            grafo = NULL;
             break;
         case 3: //Grafos dirigidos
             while (subMenu)
             {
+                if (grafo == NULL)
+                {
+                    grafo = Crear();
+                    while (!grafo->dirigido)
+                    {
+                        system("CLS");
+                        cout << "El grafo registrado no es dirigido\nPor favor registra un grafo dirigido\n";
+                        system("PAUSE");
+                        system("CLS");
+                        delete grafo;
+                        grafo = NULL;
+                        grafo = Crear();
+                    }
+                }
+                    
                 cout << "Grafos dirigidos" << endl;
                 cout << "Presiona el numero:\n1 para ver grafo dirigido en matriz\n2 para ver grafo dirigido en lista\n3 para ver BFS\n4 para ver DFS " << endl;
                 cout << "Cualquier otro numero para salir del ejercicio" << endl;
@@ -384,9 +433,13 @@ int main()
                 {
                 case 1: //Matriz de grafo dirigido
                     cout << "Matriz grafo dirigido" << endl;
+                    grafo->verMatriz();
+                    system("pause");
                     break;
                 case 2: //Lista de grafo dirigido
                     cout << "Lista grafo dirigido" << endl;
+                    grafo->verLista();
+                    system("pause");
                     break;
                 case 3: //BFS de grafo dirigido
                 {
@@ -401,6 +454,8 @@ int main()
                         else
                             cout << grafo->recorridoBFS.at(i) << endl;
                     }
+                    grafo->recorridoBFS.clear();
+                    system("pause");
                 }
                     break;
                 case 4: //DFS de grafo dirigido
@@ -418,15 +473,18 @@ int main()
                         else
                             cout << grafo->recorridoDFS.at(i) << endl;
                     }
+                    grafo->recorridoDFS.clear();
+                    system("pause");
                 }
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
+            delete grafo;
+            grafo = NULL;
             break;
         default:
             menu = false;
