@@ -22,6 +22,9 @@ struct Nodo
 
     }
 };
+
+bool compararNodos(Nodo* a, Nodo* b) { return (a->vecinos.size() < b->vecinos.size()); }
+
 class Grafo
 {
     public:
@@ -87,6 +90,25 @@ class Grafo
                 }
                 cout << endl;
             }
+        }
+        void pareoMaximal() {
+            LimpiarVisitados();
+            vector<Nodo*> nodos = listaGrafo;
+            sort(nodos.begin(), nodos.end(), compararNodos);
+            for (int i = 0; i < nodos.size(); i++) {
+                Nodo* temp = nodos.at(i);
+                if (!temp->visitado) {
+                    for (int j = 0; j < temp->vecinos.size(); j++) {
+                        if (!temp->vecinos.at(j)->visitado) {
+                            temp->vecinos.at(j)->visitado = true;
+                            temp->visitado = true;
+                            cout << temp->dato << "-" << temp->vecinos.at(j)->dato << endl;
+                            break;
+                        }
+                    }
+                }
+            }
+            LimpiarVisitados();
         }
         void DFS(Nodo* vertice, int vuelta)
         {
@@ -280,6 +302,7 @@ int main()
                     break;
                 case 3: //Pareo maximal
                     cout << "Pareos maximales" << endl;
+                    grafo->pareoMaximal();
                     break;
                 default:
                     subMenu = false;
