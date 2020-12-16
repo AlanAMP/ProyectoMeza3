@@ -7,6 +7,8 @@
 #include <sstream>
 #include <tuple>
 #include <queue>
+#include <algorithm>
+
 using namespace std;
 //Hola
 struct Nodo
