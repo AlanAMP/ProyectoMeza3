@@ -208,7 +208,70 @@ class Grafo
             cout << endl;
         return true; 
         }
+        void pareoNodos(bool perfecto){
+            //Limpiar lista de visitados
+            for(int i = 0; i < listaGrafo.size(); i++){
+                listaGrafo[i]->visitado = false;
+            }
+            //Matriz de Pares
+            int**pareos = new int*[(listaGrafo.size()/2)+1];
+            for(int i = 0; i < (listaGrafo.size()/2)+1; i++){
+                pareos[i] = new int[2];
+            }
 
+            int columnas = 0, filas = 0;
+            for(int i = 0; i < listaGrafo.size(); i++){
+                if(!listaGrafo[i]->visitado){
+                    pareos[filas][columnas] = listaGrafo[i]->dato;
+                    listaGrafo[i]->visitado = true;
+                    columnas++;
+                    for(int j = 0; j < listaGrafo[i]->vecinos.size(); j++){
+                        if(!listaGrafo[i]->vecinos[j]->visitado){
+                            pareos[filas][columnas] = listaGrafo[i]->vecinos[j]->dato;
+                            listaGrafo[i]->vecinos[j]->visitado = true;
+                            filas++;
+                            columnas = 0;
+                            j = listaGrafo[i]->vecinos.size();
+                        }
+                    }
+                    columnas = 0;
+                }
+            }
+
+            cout<<"Pareos generados \n"<<endl;
+            for(int i = 0; i < filas; i++){
+                for(int j = 0; j < 2; j++){
+                    cout<<pareos[i][j]<<",";
+                }
+                cout<<endl;
+            }
+            if(perfecto){
+                bool perfect = false;
+                for(int i = 0; i < listaGrafo.size(); i++){
+                    for(int j = 0; j < filas; j++){
+                        for(int k = 0; k < 2; k++){
+                            if(listaGrafo[i]->dato == pareos[j][k]){
+                                perfect = true;
+                                k = 2;
+                                j = filas;
+                            }
+                        }
+                    }
+                    if(!perfect){
+                        cout<<"El grafo no tiene pareo perfecto"<<endl;
+                        i = listaGrafo.size();
+                        system("pause");
+                        return;
+                    }
+                    else{
+                        perfect = false;
+                    }
+                }
+                cout<<"El grafo tiene pareo perfecto"<<endl;
+            }
+            system("pause");
+
+        }
         bool isBipartite_List(int nodeIndex){
             int *colorArr = new int[numVertices];
             for (int i = 0; i < numVertices; ++i)
@@ -386,10 +449,12 @@ int main()
                 {
                 case 1: //Pareo del grafo
                     cout << "Pareo del grafo" << endl;
+                    grafo->pareoNodos(false);
                     system("pause");
                     break;
                 case 2: //Pareo perfecto
                     cout << "Pareos perfectos" << endl;
+                    grafo->pareoNodos(true);
                     system("pause");
                     break;
                 case 3: //Pareo maximal
