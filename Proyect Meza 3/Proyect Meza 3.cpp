@@ -115,7 +115,7 @@ class Grafo
                         if (!temp->vecinos.at(j)->visitado) {
                             temp->vecinos.at(j)->visitado = true;
                             temp->visitado = true;
-                            cout << temp->dato << "-" << temp->vecinos.at(j)->dato << endl;
+                            cout << (temp->dato + 1) << "-" << (temp->vecinos.at(j)->dato + 1) << endl;
                             break;
                         }
                     }
@@ -208,25 +208,26 @@ class Grafo
             cout << endl;
         return true; 
         }
-        void pareoNodos(bool perfecto){
+        void pareoNodos(bool perfecto)
+        {
             //Limpiar lista de visitados
-            for(int i = 0; i < listaGrafo.size(); i++){
-                listaGrafo[i]->visitado = false;
-            }
+            LimpiarVisitados();
             //Matriz de Pares
             int**pareos = new int*[(listaGrafo.size()/2)+1];
-            for(int i = 0; i < (listaGrafo.size()/2)+1; i++){
+            for(int i = 0; i < (listaGrafo.size()/2)+1; i++)
                 pareos[i] = new int[2];
-            }
-
             int columnas = 0, filas = 0;
-            for(int i = 0; i < listaGrafo.size(); i++){
-                if(!listaGrafo[i]->visitado){
+            for(int i = 0; i < listaGrafo.size(); i++)
+            {
+                if(!listaGrafo[i]->visitado)
+                {
                     pareos[filas][columnas] = listaGrafo[i]->dato;
                     listaGrafo[i]->visitado = true;
                     columnas++;
-                    for(int j = 0; j < listaGrafo[i]->vecinos.size(); j++){
-                        if(!listaGrafo[i]->vecinos[j]->visitado){
+                    for(int j = 0; j < listaGrafo[i]->vecinos.size(); j++)
+                    {
+                        if(!listaGrafo[i]->vecinos[j]->visitado)
+                        {
                             pareos[filas][columnas] = listaGrafo[i]->vecinos[j]->dato;
                             listaGrafo[i]->vecinos[j]->visitado = true;
                             filas++;
@@ -237,30 +238,39 @@ class Grafo
                     columnas = 0;
                 }
             }
-
-            cout<<"Pareos generados \n"<<endl;
-            for(int i = 0; i < filas; i++){
-                for(int j = 0; j < 2; j++){
-                    cout<<pareos[i][j]<<",";
+            cout<<"Pareos generados"<<endl;
+            for(int i = 0; i < filas; i++)
+            {
+                for(int j = 0; j < 2; j++)
+                {
+                    if (j != 1)
+                        cout << (pareos[i][j] + 1) << "-";
+                    else
+                        cout << (pareos[i][j] + 1);
                 }
                 cout<<endl;
             }
-            if(perfecto){
+            if(perfecto)
+            {
                 bool perfect = false;
-                for(int i = 0; i < listaGrafo.size(); i++){
-                    for(int j = 0; j < filas; j++){
-                        for(int k = 0; k < 2; k++){
-                            if(listaGrafo[i]->dato == pareos[j][k]){
+                for(int i = 0; i < listaGrafo.size(); i++)
+                {
+                    for(int j = 0; j < filas; j++)
+                    {
+                        for(int k = 0; k < 2; k++)
+                        {
+                            if(listaGrafo[i]->dato == pareos[j][k])
+                            {
                                 perfect = true;
                                 k = 2;
                                 j = filas;
                             }
                         }
                     }
-                    if(!perfect){
+                    if(!perfect)
+                    {
                         cout<<"El grafo no tiene pareo perfecto"<<endl;
                         i = listaGrafo.size();
-                        system("pause");
                         return;
                     }
                     else{
@@ -269,8 +279,6 @@ class Grafo
                 }
                 cout<<"El grafo tiene pareo perfecto"<<endl;
             }
-            system("pause");
-
         }
         bool isBipartite_List(int nodeIndex){
             int *colorArr = new int[numVertices];
@@ -324,7 +332,6 @@ class Grafo
             return true;
             
         }
-
         void LimpiarVisitados()
         {
             for (int i = 0; i < listaGrafo.size(); i++)
@@ -380,21 +387,11 @@ Grafo* Crear()
 
 int main()
 {
-    //mamadas que hice xd
-    // mas mamadas xD x2 
     //Variables para el menú
     int opcion = 0, subOpcion = 0;
     bool menu = true, subMenu = true, registrar = true;
     //Grafo
     Grafo* grafo = nullptr;
-    //Código para registrar el grafo en la computadora
-    //grafo = Crear();
-    //grafo->verMatriz();
-    //cout << endl;
-    //grafo->verLista();
-    //system("pause");
-    //system("CLS");
-    //Codigo para el menú con los ejercicios
     while (menu)
     {
         subMenu = true; subOpcion = 0; opcion = 0;
@@ -406,7 +403,7 @@ int main()
         case 1: //Grafos bipartitos
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                     grafo = Crear();
                 cout << "Grafos Bipartitos"<<endl;
                 cout << "Presiona el numero:\n1 para usar matriz de adyacencia\n2 para usar lista de adyacencia\nCualquier otro numero para salir del ejercicio"<<endl;
@@ -432,13 +429,13 @@ int main()
                 }
                 system("CLS");
             }
-            //delete grafo;
-            grafo = NULL;
+            delete grafo;
+            grafo = nullptr;
             break;
         case 2: //Pareo de grafos 
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                     grafo = Crear();
                 cout << "Pareos de Grafos" << endl;
                 cout << "Presiona el numero:\n1 para obtener un pareo del grafo\n2 para determinar si el grafo tiene pareos perfectos\n3 para pareos maximales" << endl;
@@ -469,12 +466,12 @@ int main()
                 system("CLS");
             }
             delete grafo;
-            grafo = NULL;
+            grafo = nullptr;
             break;
         case 3: //Grafos dirigidos
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                 {
                     grafo = Crear();
                     while (!grafo->dirigido)
@@ -549,7 +546,7 @@ int main()
                 system("CLS");
             }
             delete grafo;
-            grafo = NULL;
+            grafo = nullptr;
             break;
         default:
             menu = false;
