@@ -8,9 +8,7 @@
 #include <tuple>
 #include <queue>
 #include <algorithm>
-
 using namespace std;
-//Hola
 struct Nodo
 {
     int dato; //Informacion del nodo(value)
@@ -208,7 +206,6 @@ class Grafo
             cout << endl;
         return true; 
         }
-
         bool isBipartite_List(int nodeIndex){
             int *colorArr = new int[numVertices];
             for (int i = 0; i < numVertices; ++i)
@@ -261,7 +258,6 @@ class Grafo
             return true;
             
         }
-
         void LimpiarVisitados()
         {
             for (int i = 0; i < listaGrafo.size(); i++)
@@ -324,13 +320,6 @@ int main()
     bool menu = true, subMenu = true, registrar = true;
     //Grafo
     Grafo* grafo = nullptr;
-    //Código para registrar el grafo en la computadora
-    //grafo = Crear();
-    //grafo->verMatriz();
-    //cout << endl;
-    //grafo->verLista();
-    //system("pause");
-    //system("CLS");
     //Codigo para el menú con los ejercicios
     while (menu)
     {
@@ -343,7 +332,7 @@ int main()
         case 1: //Grafos bipartitos
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                     grafo = Crear();
                 cout << "Grafos Bipartitos"<<endl;
                 cout << "Presiona el numero:\n1 para usar matriz de adyacencia\n2 para usar lista de adyacencia\nCualquier otro numero para salir del ejercicio"<<endl;
@@ -369,13 +358,13 @@ int main()
                 }
                 system("CLS");
             }
-            //delete grafo;
-            grafo = NULL;
+            delete grafo;
+            grafo = nullptr;
             break;
         case 2: //Pareo de grafos 
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                     grafo = Crear();
                 cout << "Pareos de Grafos" << endl;
                 cout << "Presiona el numero:\n1 para obtener un pareo del grafo\n2 para determinar si el grafo tiene pareos perfectos\n3 para pareos maximales" << endl;
@@ -404,12 +393,12 @@ int main()
                 system("CLS");
             }
             delete grafo;
-            grafo = NULL;
+            grafo = nullptr;
             break;
         case 3: //Grafos dirigidos
             while (subMenu)
             {
-                if (grafo == NULL)
+                if (grafo == nullptr)
                 {
                     grafo = Crear();
                     while (!grafo->dirigido)
@@ -419,11 +408,10 @@ int main()
                         system("PAUSE");
                         system("CLS");
                         delete grafo;
-                        grafo = NULL;
+                        grafo = nullptr;
                         grafo = Crear();
                     }
-                }
-                    
+                }               
                 cout << "Grafos dirigidos" << endl;
                 cout << "Presiona el numero:\n1 para ver grafo dirigido en matriz\n2 para ver grafo dirigido en lista\n3 para ver BFS\n4 para ver DFS " << endl;
                 cout << "Cualquier otro numero para salir del ejercicio" << endl;
@@ -484,7 +472,7 @@ int main()
                 system("CLS");
             }
             delete grafo;
-            grafo = NULL;
+            grafo = nullptr;
             break;
         default:
             menu = false;
