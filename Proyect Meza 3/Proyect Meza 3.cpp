@@ -196,7 +196,61 @@ class Grafo
             }
             cout << endl;
         return true; 
-        }   
+        }
+
+        bool isBipartite_List(int nodeIndex){
+            int *colorArr = new int[numVertices];
+            for (int i = 0; i < numVertices; ++i)
+                colorArr[i] = -1;
+            colorArr[nodeIndex] = 1;
+            queue <int> q;
+            q.push(nodeIndex);
+
+            while (!q.empty())
+            {
+                int u = q.front();
+                q.pop();
+                vector<Nodo*> vec = listaGrafo.at(u)->vecinos;
+                for (int i = 0; i < vec.size(); i++)
+                {
+                    if(vec.at(i)->dato == u)
+                        return false;
+                }
+                for (int i = 0; i < vec.size(); ++i)
+                {
+                    int index=vec.at(i)->dato;
+                    if(colorArr[index]==-1){
+                        colorArr[index] = 1-colorArr[u];
+                        q.push(index);
+                    }
+                    else if (colorArr[index] == colorArr[u])
+                        return false;
+                }
+                
+                
+            }
+            cout << "Primer set de vertices:" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] == 1)
+                {
+                    cout << i +1 << " ";
+                }
+            }
+            cout << endl;
+            cout << "Segundo set de vertices:" << endl;
+            for (int i = 0; i < numVertices; i++)
+            {
+                if(colorArr[i] != 1)
+                {
+                  cout << i +1 << " ";
+                } 
+            }
+            cout << endl;
+            return true;
+            
+        }
+
         void LimpiarVisitados()
         {
             for (int i = 0; i < listaGrafo.size(); i++)
@@ -279,6 +333,8 @@ int main()
                     break;
                 case 2: //Usando lista de adyacencia
                     cout << "Grafos Bipartitos con lista" << endl;
+                    if(!grafo->isBipartite_List(0))
+                        cout<<"No es bipartito"<<endl;
                     break;
                 default:
                     subMenu = false;
