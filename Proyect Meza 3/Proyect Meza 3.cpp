@@ -36,9 +36,11 @@ class Grafo
         int numVertices; //Cantidad de vertices del grafo
         vector<int> recorridoDFS;
         vector<int> recorridoBFS;
+        bool dirigido;
 
-        Grafo(int numVertices) //Inicializar matriz y lista //Constructor
+        Grafo(int numVertices, bool dirigido) //Inicializar matriz y lista //Constructor
         {
+            this->dirigido = dirigido;
             this->numVertices = numVertices;
             matrizGrafo = new int* [numVertices];
             for (int i = 0; i < numVertices; i++)
@@ -53,7 +55,7 @@ class Grafo
             }
         }
         
-        void addVecino(int vertice1, int vertice2, bool dirigido) //Registro de adyacencias del grafo
+        void addVecino(int vertice1, int vertice2) //Registro de adyacencias del grafo
         {
             if (dirigido)
             {
@@ -226,7 +228,10 @@ Grafo* Crear()
     cin >> vertices;
     cout <<"Presiona 1 si tu grafo es dirigido cualquier otro numero si no lo es\n(Esto afecta la manera en como se almacena el grafo): ";
     cin >> dirigido;
-    grafo = new Grafo(vertices);
+    if (dirigido == 1)
+        grafo = new Grafo(vertices, true);
+    else
+        grafo = new Grafo(vertices, false);
     //Codigo para registrar las adyacencias
     while (true)
     {
@@ -241,10 +246,7 @@ Grafo* Crear()
         cout << "Al vertice: ";
         cin >> vertice2;
         if (grafo != NULL) {
-            if (dirigido == 1)
-                grafo->addVecino(vertice1, vertice2, true);
-            else 
-                grafo->addVecino(vertice1, vertice2, false);
+            grafo->addVecino(vertice1, vertice2);
         }
        
     }
@@ -297,15 +299,16 @@ int main()
                     cout << "Grafo Bipartitos con matriz" << endl;
                     if(!grafo->isBipartite_Matrix(0))
                         cout << "no es bipartito "<< endl;
+                    system("pause");
                     break;
                 case 2: //Usando lista de adyacencia
                     cout << "Grafos Bipartitos con lista" << endl;
+                    system("pause");
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
             //delete grafo;
@@ -325,19 +328,21 @@ int main()
                 {
                 case 1: //Pareo del grafo
                     cout << "Pareo del grafo" << endl;
+                    system("pause");
                     break;
                 case 2: //Pareo perfecto
                     cout << "Pareos perfectos" << endl;
+                    system("pause");
                     break;
                 case 3: //Pareo maximal
                     cout << "Pareos maximales" << endl;
                     grafo->pareoMaximal();
+                    system("pause");
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
             delete grafo;
@@ -347,7 +352,20 @@ int main()
             while (subMenu)
             {
                 if (grafo == NULL)
+                {
                     grafo = Crear();
+                    while (!grafo->dirigido)
+                    {
+                        system("CLS");
+                        cout << "El grafo registrado no es dirigido\nPor favor registra un grafo dirigido\n";
+                        system("PAUSE");
+                        system("CLS");
+                        delete grafo;
+                        grafo = NULL;
+                        grafo = Crear();
+                    }
+                }
+                    
                 cout << "Grafos dirigidos" << endl;
                 cout << "Presiona el numero:\n1 para ver grafo dirigido en matriz\n2 para ver grafo dirigido en lista\n3 para ver BFS\n4 para ver DFS " << endl;
                 cout << "Cualquier otro numero para salir del ejercicio" << endl;
@@ -357,9 +375,13 @@ int main()
                 {
                 case 1: //Matriz de grafo dirigido
                     cout << "Matriz grafo dirigido" << endl;
+                    grafo->verMatriz();
+                    system("pause");
                     break;
                 case 2: //Lista de grafo dirigido
                     cout << "Lista grafo dirigido" << endl;
+                    grafo->verLista();
+                    system("pause");
                     break;
                 case 3: //BFS de grafo dirigido
                 {
@@ -374,6 +396,8 @@ int main()
                         else
                             cout << grafo->recorridoBFS.at(i) << endl;
                     }
+                    grafo->recorridoBFS.clear();
+                    system("pause");
                 }
                     break;
                 case 4: //DFS de grafo dirigido
@@ -391,13 +415,14 @@ int main()
                         else
                             cout << grafo->recorridoDFS.at(i) << endl;
                     }
+                    grafo->recorridoDFS.clear();
+                    system("pause");
                 }
                     break;
                 default:
                     subMenu = false;
                     break;
                 }
-                system("pause");
                 system("CLS");
             }
             delete grafo;
